@@ -410,6 +410,12 @@ class TestFilters < JekyllUnitTest
         assert_equal "b", results[1]["id"]
         assert_equal "d", results[2]["id"]
       end
+
+      should "filter posts" do
+        site = fixture_site.tap(&:read)
+        results = @filter.where_exp(site.posts, "obj", "obj.title == 'Foo Bar'")
+        assert site.posts.length > results.length, "results.length = #{results.length}"
+      end
     end
 
     context "sort filter" do
