@@ -414,7 +414,8 @@ class TestFilters < JekyllUnitTest
       should "filter posts" do
         site = fixture_site.tap(&:read)
         results = @filter.where_exp(site.posts, "obj", "obj.title == 'Foo Bar'")
-        assert site.posts.length > results.length, "results.length = #{results.length}"
+        assert_equal 1, results.length
+        assert_equal site.posts.find { |p| p.title == "Foo Bar" }, results.first
       end
     end
 
