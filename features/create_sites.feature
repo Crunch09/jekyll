@@ -133,6 +133,24 @@ Feature: Create sites
     And the _site directory should exist
     And I should see "URL: /2008/01/01/entry2/" in "_site/index.html"
 
+  Scenario: Basic site with internal post linking for duplicated filenames
+    Given I have an "index.html" page that contains "URL: {% post_url 2008-01-01-entry2 %}"
+    And I have a configuration file with "permalink" set to "pretty"
+    And I have a _posts directory
+    And I have a en/_posts directory
+    And I have the following posts:
+      | title  | date       | layout | content             |
+      | entry1 | 2008-01-05 | post   | URL: {% post_url /en/_posts/2008-01-01-entry2 %} |
+      | entry2 | 2008-01-01 | post   | content for entry2. |
+    And I have the following posts in "en":
+      | title | date | layout | content |
+      | entry2 | 2008-01-01 | post | en content for entry2. |
+    When I run jekyll build
+    Then I should get a zero exit status
+    And the _site directory should exist
+    And I should see "URL: /2008/01/01/entry2/" in "_site/index.html"
+    And I should see "URL: /en/2008/01/01/entry2/" in "_site/2008/01/05/entry1/index.html"
+
   Scenario: Basic site with whitelisted dotfile
     Given I have an ".htaccess" file that contains "SomeDirective"
     When I run jekyll build

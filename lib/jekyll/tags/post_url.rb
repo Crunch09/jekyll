@@ -1,3 +1,4 @@
+
 module Jekyll
   module Tags
     class PostComparer
@@ -23,7 +24,8 @@ module Jekyll
       end
 
       def ==(other)
-        other.basename.match(@name_regex)
+        other.basename.match(@name_regex) ||
+          other.relative_path.match(@name_regex)
       end
 
       def deprecated_equality(other)
@@ -68,7 +70,6 @@ eos
 
       def render(context)
         site = context.registers[:site]
-
         site.posts.docs.each do |p|
           return p.url if @post == p
         end
