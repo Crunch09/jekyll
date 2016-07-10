@@ -221,9 +221,11 @@ module Jekyll
     #
     # Returns the filtered array of objects
     def where(input, property, value)
-      return input unless input.is_a?(Enumerable)
+      return input unless input.respond_to?(:select)
       input = input.values if input.is_a?(Hash)
-      input.select { |object| Array(item_property(object, property)).map(&:to_s).include?(value.to_s) }
+      input.select do |object|
+        Array(item_property(object, property)).map(&:to_s).include?(value.to_s)
+      end || []
     end
 
     # Filters an array of objects against an expression
@@ -234,7 +236,7 @@ module Jekyll
     #
     # Returns the filtered array of objects
     def where_exp(input, variable, expression)
-      return input unless input.is_a?(Enumerable)
+      return input unless input.respond_to?(:select)
       input = input.values if input.is_a?(Hash) # FIXME
 
       condition = parse_condition(expression)
@@ -243,7 +245,7 @@ module Jekyll
           @context[variable] = object
           condition.evaluate(@context)
         end
-      end
+      end || []
     end
 
     # Sort an array of objects
